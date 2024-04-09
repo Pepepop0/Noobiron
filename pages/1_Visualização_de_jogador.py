@@ -2,9 +2,16 @@ import streamlit as st
 import pandas as pd
 import os
 from PIL import Image, ImageDraw
+from db_setup.players_crud import playersCRUD
 #Placeholder, integrar com o DB futuramente
-player_names = ['Pepe Popo', 'Zero', 'Liquid', 'Shadow', 'Muca', 'Brujoga10', 'Luck', 'Nargoth']
 
+database = playersCRUD()
+players_infos = database.get_players_info()
+player_ids = []
+player_names = []
+for  player_id, player_nick in players_infos.items():
+    player_ids.append(player_id)
+    player_names.append(player_nick)
 
 def crop_to_square(image_path, output_path, size=(1000, 1000)):
     # Abre a imagem
@@ -64,7 +71,7 @@ def show_player_stats(player_ID, player_name):
             icon_path = "assets/ph_player_icon.png"
 
         #Placeholder
-        scores = [[ 9.5 , 8.0 ]]
+        scores = database.get_players_score(player_ID)
         data_player = pd.DataFrame(scores, columns=['Eixo' , 'Aliados'])
 
         col_1, col_2, col_3 = st.columns([1.25, 1, 1.25])
@@ -202,7 +209,13 @@ col_1, col_2, col_3 = st.columns([8,1,1])
 lock_UI = False
 with col_1:
     selected_player = st.selectbox(label="Nick do jogador:", options=player_names, index=None, placeholder="insira o nick do jogador", label_visibility='collapsed', disabled=lock_UI)
-    selected_id = 12345
+    
+    #Rodigo me mata se ele ver isso
+    selected_id = None
+    for player_id, player_nick in players_infos.items():
+        if player_nick == selected_player:
+            selected_id = player_id
+            break
 with col_2:
     edit_mode = st.toggle(label="Edição", value=False, disabled = lock_UI)
 with col_3:
