@@ -1,3 +1,4 @@
+import subprocess
 import mysql.connector
 import configparser
 
@@ -75,8 +76,46 @@ class playersCRUD:
         """
         self.cursor.execute(query)
         results = self.cursor.fetchall()
+        results = [results[0][0], results[0][1]]
+        return results
+    
+    def get_players_score_DF(self, id):
+        query = f"""
+        select score_axis, score_alies
+        from players_statics
+        where player_id = {id}
+        """
+        self.cursor.execute(query)
+        results = self.cursor.fetchall()
         return results
 
+    def update_player_scores(self, id, new_score_axis, new_score_allies):
+        query = """
+        UPDATE players_statics
+        SET score_axis = %s, score_alies = %s
+        WHERE player_id = %s
+        """
+        values = (new_score_axis, new_score_allies, id)
+        self.cursor.execute(query, values)
+        self.conn.commit()
+        print("Scores atualizados com sucesso para o jogador com ID:", id)
+    
+    def delete_player(self, id):
+        # Excluir da tabela players_info
+        query_info = """
+        DELETE FROM players_info
+        WHERE player_id = %s
+        """
+        self.cursor.execute(query_info, (id,))
+        # Excluir da tabela players_statics
+        query_statics = """
+        DELETE FROM players_statics
+        WHERE player_id = %s
+        """
+        self.cursor.execute(query_statics, (id,))
+        
+        self.conn.commit()
+        print("Usuário com ID", id, "foi deletado com sucesso.")
 
     def __end__(self):
         self.cursor.close()
@@ -84,4 +123,4 @@ class playersCRUD:
 
 if __name__ == '__main__':
     crud = playersCRUD()
-    print(crud.get_players_score('1001'))
+    crud.reset_db_from_script()

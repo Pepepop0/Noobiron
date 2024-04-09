@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from db_setup.players_crud import playersCRUD
+import subprocess
 
 atributes_player = [
     'player_id',
@@ -25,4 +26,3 @@ def show_results(args , results, selected = atributes_player):
 st.write("Todo o DB:")
 db = playersCRUD()
 show_results(atributes_player, db.get_all_data())
-

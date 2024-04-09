@@ -71,7 +71,7 @@ def show_player_stats(player_ID, player_name):
             icon_path = "assets/ph_player_icon.png"
 
         #Placeholder
-        scores = database.get_players_score(player_ID)
+        scores = database.get_players_score_DF(player_ID)
         data_player = pd.DataFrame(scores, columns=['Eixo' , 'Aliados'])
 
         col_1, col_2, col_3 = st.columns([1.25, 1, 1.25])
@@ -93,7 +93,7 @@ def show_edit_menu(player_ID, player_name):
         icon_path = "assets/ph_player_icon.png"
 
     # Placeholder
-    scores = [9.5, 8.0]
+    scores = database.get_players_score(player_ID)
     col_1, col_2, col_3 = st.columns([1.25, 1, 1.25])
 
     with col_2:
@@ -135,13 +135,17 @@ def show_edit_menu(player_ID, player_name):
         
         c1 , c2 = st.columns([1,1])
         with c1:
-            new_axis_score = st.number_input(value=scores[0], label='Eixo', min_value= 0.0, max_value= 10.0, step = 1.0)
-            if st.button(label="Salvar", use_container_width=True):
-                print("Bajo bajo")
+            new_axis_score_input = st.number_input(value=scores[0], label='Eixo', min_value= 0.0, max_value= 10.0, step = 1.0)
         with c2:
-            new_allies_score = st.number_input(value=scores[1], label='Aliados', min_value= 0.0, max_value= 10.0, step = 1.0)
+            new_allies_score_input = st.number_input(value=scores[1], label='Aliados', min_value= 0.0, max_value= 10.0, step = 1.0)
+        cl1 , cl2 = st.columns([1,1])
+        with cl1:
+            if st.button(label="Salvar", use_container_width=True):
+                database.update_player_scores(id=selected_id , new_score_axis= new_axis_score_input , new_score_allies= new_allies_score_input)
+        with cl2:
             if st.button(label="Deletar jogador", use_container_width=True):
-                print("Ayo Ayo")
+                database.delete_player(id=selected_id)
+                st.rerun()
 
 
 
