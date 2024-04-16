@@ -1,19 +1,23 @@
 import streamlit as st
+import pandas as pd
+
 
 class playersCRUD:
     def __init__(self):
 
         self.conn = st.connection('mysql', type='sql')
-        self.conn.query('SELECT * from mytable;', ttl=600)
 
     def get_all_players(self):
         query = """
-            SELECT *
+            SELECT player_id, player_nick
             FROM players_info
         """
         results = self.conn.query(query, ttl=600)
-        ret = [[j for j in i] for i in results]
-        return ret
+        print("get_all_players:\n", results)
+        player_list = results.values.tolist()
+        print(player_list)
+        return player_list
+
 
     def get_all_data(self):
         query = """
@@ -22,8 +26,8 @@ class playersCRUD:
                 where pi.player_id = ps.player_id;
         """
         results = self.conn.query(query, ttl=600)
-        ret = [[j for j in i] for i in results]
-        return ret
+        print("get_all_data:\n", results)
+        return results
 
     def get_players_names(self):
         query = """
