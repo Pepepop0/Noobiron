@@ -17,9 +17,9 @@ class playersCRUD:
             FROM players_info
         """
         results = self.conn.query(query, ttl=600)
-        print("get_all_players:\n", results)
+        #print("get_all_players:\n", results)
         player_list = results.values.tolist()
-        print(player_list)
+        #print(player_list)
         return player_list
 
 
@@ -30,7 +30,7 @@ class playersCRUD:
                 where pi.player_id = ps.player_id;
         """
         results = self.conn.query(query, ttl=600)
-        print("get_all_data:\n", results.values.tolist())
+        #print("get_all_data:\n", results.values.tolist())
         return results.values.tolist()
 
     def get_players_names(self):
@@ -86,7 +86,7 @@ class playersCRUD:
         SET score_axis = {new_score_axis}, score_alies = {new_score_allies}
         WHERE player_id = {id}
         """)
-        print(query)
+        #print(query)
         with self.session() as session:
             session.execute(query)
             session.commit()
@@ -97,12 +97,12 @@ class playersCRUD:
         SET player_nick = '{new_name}'
         WHERE player_id = {id}
         """)
-        print(query)
+        #print(query)
 
         with self.session() as session:
             session.execute(query)
             session.commit()
-        print("Infos atualizadas com sucesso para o jogador com ID:", id)
+        #print("Infos atualizadas com sucesso para o jogador com ID:", id)
 
 
 
@@ -124,7 +124,7 @@ class playersCRUD:
             session.execute(query_info)
             session.commit()
 
-        print("Usuário com ID", id, "foi deletado com sucesso.")
+        #print("Usuário com ID", id, "foi deletado com sucesso.")
 
 
     def insert_new_player(self, new_player_name, score_axis, score_allies):
@@ -135,7 +135,7 @@ class playersCRUD:
         with self.session() as session:
             result = session.execute(query_info, {"new_player_name": new_player_name})
             player_id = result.lastrowid
-            print(f"NOVO ID DE JOGADOR: {player_id}")
+            #print(f"NOVO ID DE JOGADOR: {player_id}")
             session.commit()
 
         # Insere as estatísticas do jogador na tabela players_statics
@@ -146,7 +146,7 @@ class playersCRUD:
             session.execute(query_statics, {"player_id": player_id, "score_axis": score_axis, "score_allies": score_allies})
             session.commit()
 
-        print("Novo jogador inserido com sucesso!")
+        #print("Novo jogador inserido com sucesso!")
 
         # Retorna o ID do novo jogador
         return player_id
@@ -181,4 +181,4 @@ class playersCRUD:
 
 if __name__ == '__main__':
     crud = playersCRUD()
-    print(crud.get_selected_players_data([1001, 1002]))
+    #print(crud.get_selected_players_data([1001, 1002]))
