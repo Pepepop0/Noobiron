@@ -10,6 +10,12 @@ for  player_id, player_nick in players_infos.items():
     player_ids.append(player_id)
     player_names.append(player_nick)
 
+if 'DB_altflag' not in st.session_state:
+    st.session_state['DB_altflag'] = False
+
+
+
+
 
 def main():
     st.markdown('''<div style='text-align: center;'>
@@ -20,12 +26,18 @@ def main():
     
     if 'gamemode' not in st.session_state:
         st.session_state['gamemode'] = 0
-    st.session_state['gamemode'] = st.session_state['gamemode']
-    if 'gameready' not in st.session_state:
         st.session_state['gameready'] = False
     if 'players_axis' not in st.session_state or 'players_allies' not in st.session_state:
         st.session_state['players_axis'] = ["Esperando jogador..." for i in range(st.session_state['gamemode'])]
         st.session_state['players_allies'] = ["Esperando jogador..." for i in range(st.session_state['gamemode'])]
+        
+    if st.session_state['DB_altflag']:
+        st.session_state['gamemode'] = 0
+        st.session_state['gameready'] = False
+        st.session_state['players_axis'] = ["Esperando jogador..." for i in range(st.session_state['gamemode'])]
+        st.session_state['players_allies'] = ["Esperando jogador..." for i in range(st.session_state['gamemode'])]
+        st.session_state['DB_altflag'] = False
+
 
     if st.toggle(label='debug', value= False):
         st.markdown('''<h4> Debug stats:</h4>''', unsafe_allow_html=True)
@@ -42,6 +54,10 @@ def main():
                 st.session_state['gameready'] = False
             else:
                 st.session_state['gameready'] = True
+            st.rerun()
+
+        if st.button(label='Raise DBaltflag'):
+            st.session_state['DB_altflag'] = True
             st.rerun()
 
     c0, c1, c2, c3, c4 ,c5 = st.columns([1,1,1,1,1,1])
@@ -88,14 +104,17 @@ def main():
     st.markdown('''<div align='center'><h1>\n \n \n \n  </h1></div>''', unsafe_allow_html=True)
 
     with cl1:
-        
-        st.markdown('''<div align='center'><h2>Aliados:</h2></div>''', unsafe_allow_html=True)
-        corner_left, col_1, col_2 = st.columns([5, 3,2])
+        if st.session_state['gamemode'] != 0:
+            st.markdown('''<div align='center'><h2>Aliados:</h2></div>''', unsafe_allow_html=True)
+        if st.session_state['gameready'] == False:
+            corner_left, col_1, col_2 = st.columns([1,1,2])
+        else:
+            corner_left, col_1, col_2 = st.columns([5, 2,3])
         if st.session_state['gameready'] == False:
             st.write("<style> .left {text-align: left; font-size: 1.0em; opacity: 0.75; font-style: italic;} </style>", unsafe_allow_html=True)
             for player in st.session_state['players_allies']:
-                with col_1:
-                    st.markdown(f"<div style='text-align: right; font-size: 1.5em; opacity: 0.75; font-style: italic;'>{player}</div>", unsafe_allow_html=True)
+                with col_2:
+                    st.markdown(f"<div style='text-align: left; font-size: 1.5em; opacity: 0.75; font-style: italic;'>{player}</div>", unsafe_allow_html=True)
         else:
             st.write("<style> .left {text-align: left; font-size: 1.5em; opacity: 1;} </style>", unsafe_allow_html=True)
             for player in st.session_state['players_allies']:
@@ -105,7 +124,8 @@ def main():
                     st.markdown(f"<div style='font-size: 2.25em; line-height: 2.20em; vertical-align: middle;'>{player}</div>", unsafe_allow_html=True)
 
     with cl2:
-        st.markdown('''<div align='center'><h2>Eixo:</h2></div>''', unsafe_allow_html=True)
+        if st.session_state['gamemode'] != 0:
+            st.markdown('''<div align='center'><h2>Eixo:</h2></div>''', unsafe_allow_html=True)
         corner_l, col_3, col_4, corner_r = st.columns([2,5,4,5])
         if st.session_state['gameready'] == False:
             for player in st.session_state['players_axis']:
@@ -123,25 +143,25 @@ def main():
 
 
     lft , cnt, rgt  = st.columns([1,0.75,1])
+    if st.session_state['gamemode'] != 0:
+        with cnt:
+            if st.button(label='Gerar partida!', key='gerar_partida', help='Clique aqui para gerar a partida', use_container_width=True):
+                if len(players_match) < st.session_state['gamemode'] * 2:
+                    st.write('Players insuficientes!')
+                else:
+                    players_data = player_database.get_selected_players_data(get_players_ids(player_names = player_names, player_ids=player_ids, selected_players = players_match))
+                    best_ally_team, best_axis_team, best_ally_score, best_axis_score = get_teams_with_minimum_difference(players_data)
 
-    with cnt:
-        if st.button(label='Gerar partida!', key='gerar_partida', help='Clique aqui para gerar a partida', use_container_width=True):
-            if len(players_match) < st.session_state['gamemode'] * 2:
-                st.write('Players insuficientes!')
-            else:
-                players_data = player_database.get_selected_players_data(get_players_ids(player_names = player_names, player_ids=player_ids, selected_players = players_match))
-                best_ally_team, best_axis_team, best_ally_score, best_axis_score = get_teams_with_minimum_difference(players_data)
+                    print(players_data)
+                    print("###################################################################################\n")
+                    print(f"Melhor time de Aliados:", best_ally_team , " score:", best_ally_score )
+                    print(f"Melhor time de Eixo:", best_axis_team, " score:", best_axis_score)
+                    print("\n###################################################################################\n")
 
-                print(players_data)
-                print("###################################################################################\n")
-                print(f"Melhor time de Aliados:", best_ally_team , " score:", best_ally_score )
-                print(f"Melhor time de Eixo:", best_axis_team, " score:", best_axis_score)
-                print("\n###################################################################################\n")
-
-                st.session_state['players_axis'] = best_axis_team
-                st.session_state['players_allies'] = best_ally_team
-                st.session_state['gameready'] = True
-                st.rerun()
+                    st.session_state['players_axis'] = best_axis_team
+                    st.session_state['players_allies'] = best_ally_team
+                    st.session_state['gameready'] = True
+                    st.rerun()
 
 
 def get_players_ids(player_names, player_ids, selected_players):
