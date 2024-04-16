@@ -1,5 +1,4 @@
 .venv ,
 assets/,
-.vscode,
-secrets.toml,
+.vscode
  
