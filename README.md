@@ -8,17 +8,17 @@ NoobIron is an online dashboard designed for balancing matches between friends i
 
 ## Features
 
-- **Player Management:** Easily visualize, edit, and create player profiles. The dashboard seamlessly connects to an SQL database, facilitating efficient management of registered players.
+- **Player Management:** Easily visualize, edit, and create player profiles. The dashboard connects to an SQL database, facilitating management of registered players.
   <p align="center">
   <img src="assets\git\Print_Edição.png" alt="Edition Page">
   </p>
-- **Match Generation:** Assign players to matches ranging from 1v1 to 4v4. The dashboard intelligently balances matches by considering the skill levels of registered players, ensuring fair and competitive gameplay.
+- **Match Generation:** Assign players to matches ranging from 1v1 to 4v4. The dashboard balances matches by considering the skill levels of registered players.
   <p align="center">
   <img src="assets\git\Print_Geração de Partida.png" alt="Generation Page">
   </p>
 
 ## Getting Started
-To begin using NoobIron, follow these simple steps:
+To begin using NoobIron, follow these steps:
 
 1. **Download and Install MySQL and SQL Workbench:** Ensure you have MySQL and SQL Workbench installed on your system.
 2. **Database Setup:** Create a database using the provided .SQL script located in "db_setup\create_schema.sql".
