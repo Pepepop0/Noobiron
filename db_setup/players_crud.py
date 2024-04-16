@@ -2,11 +2,12 @@ import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+import pymysql
 
 
 class playersCRUD:
     def __init__(self):
-
+        pymysql.install_as_MySQLdb()
         self.conn = st.connection('mysql', type='sql')
         self.engine = create_engine('mysql://sql10699541:uD5suGjlyY@sql10.freesqldatabase.com/sql10699541')
         self.session = sessionmaker(bind=self.engine)
