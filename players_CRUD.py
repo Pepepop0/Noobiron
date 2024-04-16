@@ -26,8 +26,8 @@ class playersCRUD:
                 where pi.player_id = ps.player_id;
         """
         results = self.conn.query(query, ttl=600)
-        print("get_all_data:\n", results)
-        return results
+        print("get_all_data:\n", results.values.tolist())
+        return results.values.tolist()
 
     def get_players_names(self):
         query = """
@@ -35,8 +35,7 @@ class playersCRUD:
         from players_info
         """
         results = self.conn.query(query, ttl=600)
-        ret = [[j for j in i] for i in results]
-        return ret
+        return results.values.tolist()
 
     def get_players_IDs(self):
         query = """
@@ -44,8 +43,7 @@ class playersCRUD:
         from players_info
         """
         results = self.conn.query(query, ttl=600)
-        ret = [[j for j in i] for i in results]
-        return ret
+        return results.values.tolist()
     
     def get_players_info(self):
         query = """
@@ -53,7 +51,7 @@ class playersCRUD:
         from players_info
         """
         results = self.conn.query(query, ttl=600)
-        player_info_dict = {id: nick for id, nick in results}
+        player_info_dict = {id: nick for id, nick in results.values.tolist()}
         return player_info_dict
     
     def get_players_score(self, id):
@@ -63,6 +61,7 @@ class playersCRUD:
         where player_id = {id}
         """
         results = self.conn.query(query, ttl=600)
+        results = results.values.tolist()
         results = [results[0][0], results[0][1]]
         return results
 

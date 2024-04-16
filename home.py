@@ -23,3 +23,6 @@ st.write(database.get_players_IDs())
 
 st.write('get_players_info():')
 st.write(database.get_players_info())
+
+st.write('get_players_score(1001):')
+st.write(database.get_players_score(1001))
