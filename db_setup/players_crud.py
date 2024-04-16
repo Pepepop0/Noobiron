@@ -2,6 +2,7 @@ import subprocess
 import mysql.connector
 import configparser
 import itertools
+import streamlit as st
 
 class playersCRUD:
     def __init__(self):
@@ -10,12 +11,7 @@ class playersCRUD:
         config.read("./db_setup/config.cfg")
         params = config["mysql"]
 
-        self.conn = mysql.connector.connect(
-            host=params["host"],
-            user=params["user"],
-            password=params["password"],
-            database='players'
-        )
+        self.conn = st.connection('mysql', type='sql')
         self.cursor = self.conn.cursor()
 
     def get_all_players(self):
