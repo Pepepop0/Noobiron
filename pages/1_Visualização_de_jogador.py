@@ -28,6 +28,11 @@ if 'Visualization_mode' not in st.session_state:
     # 2 = Creation
     st.session_state['Visualization_mode'] = 0
 
+def reset_st():
+    st.cache_resource.clear()
+    st.cache_data.clear()
+    st.rerun()
+
 def set_img_change():
     st.session_state['IMG_Change_Edit'] = True
     print("pa")
@@ -186,11 +191,14 @@ def show_edit_menu(player_ID, player_name):
                         shutil.move(src= f"assets\_temp\_tmp-{player_ID}-pfp.png", dst=f"assets\profle_pics\{player_ID}_pfp.png")
                     database.update_player_info(id=selected_id , new_score_axis= new_axis_score_input , new_score_allies= new_allies_score_input, new_name = new_name)
                     st.session_state['DB_altflag'] = True
+                    st.cache_resource.clear()
+                    reset_st()
                     st.rerun()
             with cl2:
                 if st.button(label="Deletar jogador", use_container_width=True):
                     database.delete_player(id=selected_id)
                     st.session_state['DB_altflag'] = True
+                    reset_st()
                     st.rerun()
         except SyntaxError:
             print("SyntaxError!")
@@ -264,6 +272,8 @@ def show_creation_menu():
                         new_allies_score = 0
 
                         st.session_state['DB_altflag'] = True
+                        st.cache_resource.clear()
+                        reset_st()
                         st.rerun()
         except OSError or SyntaxError:
             print("Erro de ciração!")

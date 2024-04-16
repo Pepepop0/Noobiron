@@ -21,7 +21,16 @@ def show_results(args , results, selected = atributes_player):
         st.table(df[selected])
 
 
+if 'teste' not in st.session_state:
+    st.session_state['teste'] = 1
+st.write(st.session_state['teste'])
 
 st.write("Todo o DB:")
 db = playersCRUD()
 show_results(atributes_player, db.get_all_data())
+
+if st.button('reload'):
+    st.cache_resource.clear()
+    st.cache_data.clear()
+    st.session_state['teste'] += 1
+    st.rerun()
