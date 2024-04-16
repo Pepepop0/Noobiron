@@ -1,6 +1,7 @@
 import subprocess
 import mysql.connector
 import configparser
+import itertools
 
 class playersCRUD:
     def __init__(self):
@@ -150,6 +151,31 @@ class playersCRUD:
         # Retorna o ID do novo jogador
         return player_id
 
+    def get_selected_players_data(self, selected_players_ids):
+        # Lista para armazenar os dados dos jogadores selecionados
+        selected_players_data = []
+
+        # Consulta para obter os dados dos jogadores selecionados
+        query = "SELECT players_info.player_nick, players_statics.score_axis, players_statics.score_alies FROM players_info INNER JOIN players_statics ON players_info.player_id = players_statics.player_id WHERE players_info.player_id IN (%s)" % ','.join(map(str, selected_players_ids))
+
+        # Executar a consulta
+        self.cursor.execute(query)
+
+        # Recuperar os resultados
+        results = self.cursor.fetchall()
+
+        # Processar os resultados e armazenar em uma lista de dicionários
+        for row in results:
+            player_data = {
+                'name': row[0],
+                'score_axis': row[1],
+                'score_allies': row[2]
+            }
+            selected_players_data.append(player_data)
+
+        return selected_players_data
+
+
 
     def __end__(self):
         self.cursor.close()
@@ -157,4 +183,4 @@ class playersCRUD:
 
 if __name__ == '__main__':
     crud = playersCRUD()
-    crud.reset_db_from_script()
+    print(crud.get_selected_players_data([1001, 1002]))

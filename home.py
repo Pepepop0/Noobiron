@@ -24,6 +24,9 @@ def main():
         menu_items = {
             'About': ''' Dashboard feito para a noobada, possui o selo Pepe popo de qualidade duvidosa
             \n - Ao persistir a noobada zero deverá ser consultado
+
+
+            Versão: 1.0
             '''
         }
         )
