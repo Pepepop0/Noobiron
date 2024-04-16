@@ -49,3 +49,4 @@ if st.button('insert'):
     st.write(database.insert_new_player(new_player_name ="pepe" , score_axis = 9 , score_allies = 8))
     st.rerun()
 
+st.image("GLK41XaW4AA-rk5.jpeg")
