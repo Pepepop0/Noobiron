@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from db_setup.players_crud import playersCRUD
-import subprocess
 
 atributes_player = [
     'player_id',
