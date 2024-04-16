@@ -30,6 +30,10 @@ st.write(database.get_players_score(1001))
 st.write('get_players_score_DF(1001):')
 st.write(database.get_players_score_DF(1001))
 
+st.write('get_selected_players_data([1002 , 1003])')
+st.write(database.get_selected_players_data([1002 , 1003]))
+
+
 st.write('Update_player_info(1001):')
 if st.button('update'):
     database.update_player_info(id = 1001 , new_score_axis = 9, new_score_allies = 8.5, new_name = 'pEEEEEEEEEE')
@@ -44,3 +48,4 @@ st.write('insert_new_player(new_player_name ="pepe" , score_axis = 9 , score_all
 if st.button('insert'):
     st.write(database.insert_new_player(new_player_name ="pepe" , score_axis = 9 , score_allies = 8))
     st.rerun()
+
