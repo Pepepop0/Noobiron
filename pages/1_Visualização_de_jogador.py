@@ -3,7 +3,9 @@ import pandas as pd
 import os
 from PIL import Image, ImageDraw
 from db_setup.players_crud import playersCRUD
+import shutil
 #Placeholder, integrar com o DB futuramente
+
 
 database = playersCRUD()
 players_infos = database.get_players_info()
@@ -12,6 +14,22 @@ player_names = []
 for  player_id, player_nick in players_infos.items():
     player_ids.append(player_id)
     player_names.append(player_nick)
+
+def clean_start():
+    # Caminho da pasta temporária
+    temp_folder = "assets/_temp"
+
+    # Verifica se o diretório existe
+    if os.path.exists(temp_folder) and os.path.isdir(temp_folder):
+        # Percorre todos os itens dentro da pasta temporária
+        for item in os.listdir(temp_folder):
+            item_path = os.path.join(temp_folder, item)
+            # Verifica se o item é um arquivo e não é a própria pasta temporária
+            if os.path.isfile(item_path):
+                os.remove(item_path)  # Remove o arquivo
+            elif os.path.isdir(item_path):
+                os.rmdir(item_path)  # Remove o diretório (se necessário)
+
 
 def crop_to_square(image_path, output_path, size=(1000, 1000)):
     # Abre a imagem
@@ -62,13 +80,13 @@ def crop_to_circle(image_path, output_path, size=(1000, 1000)):
 def show_player_stats(player_ID, player_name):
     # Carrega a imagem
     if player_name == None:
-        print("Não encontrado")
+        print(f'imagem não achada para o jogador: {player_ID}')
     else:
-        if os.path.exists(f"assets/profile_pics/{player_ID}_pfp.png"):
-            icon_path = f"assets/profile_pics/{player_ID}_pfp.png"
+        if os.path.exists(f"assets\profle_pics\{player_ID}_pfp.png"):
+            icon_path = f"assets\profle_pics\{player_ID}_pfp.png"
         else:
             print('imagem não achada!')
-            icon_path = "assets/ph_player_icon.png"
+            icon_path = "assets\profle_pics\ph_player_icon.png"
 
         #Placeholder
         scores = database.get_players_score_DF(player_ID)
@@ -86,11 +104,11 @@ def show_player_stats(player_ID, player_name):
             c1 , c2 = st.columns([1,1])
 
 def show_edit_menu(player_ID, player_name):
-    if os.path.exists(f"assets/profile_pics/{player_ID}_pfp.png"):
-        icon_path = f"assets/profile_pics/{player_ID}_pfp.png"
+    if os.path.exists(f"assets\profle_pics\{player_ID}_pfp.png"):
+        icon_path = f"assets\profle_pics\{player_ID}_pfp.png"
     else:
-        print('imagem não achada!')
-        icon_path = "assets/ph_player_icon.png"
+        print(f'imagem não achada para o jogador: {player_ID}')
+        icon_path = "assets\profle_pics\ph_player_icon.png"
 
     # Placeholder
     scores = database.get_players_score(player_ID)
@@ -103,7 +121,7 @@ def show_edit_menu(player_ID, player_name):
         new_profile_pic_path = None
         if uploaded_file is not None:
             # Salva o arquivo temporariamente
-            temp_path = os.path.join("assets", "profile_pics", f"{player_ID}_temp_pfp.png")
+            temp_path = f"assets\_temp\_tmp-{player_ID}-pfp.png"
             with open(temp_path, "wb") as f:
                 f.write(uploaded_file.read())
 
@@ -113,19 +131,6 @@ def show_edit_menu(player_ID, player_name):
                 # Transforma o quadrado em um círculo
                 crop_to_circle(temp_path, temp_path)
                 st.image(temp_path, caption=f"Preview:", width=150, output_format='PNG')
-
-            # Botão para confirmar o salvamento da nova foto
-            if st.button(label="Salvar nova foto"):
-                # Move a nova foto temporária para o diretório final
-                new_profile_pic_path = os.path.join("assets", "profile_pics", f"{player_ID}_pfp.png")
-                # Salva a imagem como quadrado
-                crop_to_square(temp_path, new_profile_pic_path)
-                # Transforma o quadrado em um círculo
-                crop_to_circle(new_profile_pic_path, new_profile_pic_path)
-                os.remove(temp_path)
-                st.write("Nova foto salva com sucesso!")
-                icon_path = f"assets/profile_pics/{player_ID}_pfp.png"
-                st.experimental_rerun()
 
 
         new_name = st.text_input(label='Novo nome', placeholder=player_name, value=player_name, max_chars=50)
@@ -141,38 +146,50 @@ def show_edit_menu(player_ID, player_name):
         cl1 , cl2 = st.columns([1,1])
         with cl1:
             if st.button(label="Salvar", use_container_width=True):
-                database.update_player_scores(id=selected_id , new_score_axis= new_axis_score_input , new_score_allies= new_allies_score_input)
+                if os.path.exists(f"assets\_temp\_tmp-{player_ID}-pfp.png"):
+                    shutil.move(src= f"assets\_temp\_tmp-{player_ID}-pfp.png", dst=f"assets\profle_pics\{player_ID}_pfp.png")
+                database.update_player_info(id=selected_id , new_score_axis= new_axis_score_input , new_score_allies= new_allies_score_input, new_name = new_name)
+                st.rerun()
         with cl2:
             if st.button(label="Deletar jogador", use_container_width=True):
                 database.delete_player(id=selected_id)
                 st.rerun()
 
-
-
 def show_creation_menu():
-    icon_path = "assets/ph_player_icon.png"
+    if os.path.exists(f"assets\_temp\_tmp-new-user-pfp.png"):
+        icon_path = f"assets\_temp\_tmp-new-user-pfp.png"
+    else:
+        shutil.copy("assets\profle_pics\ph_player_icon.png", "assets\_temp\_tmp-new-user-pfp.png")
+        icon_path = "assets\profle_pics\ph_player_icon.png"
 
     # Placeholder
-    scores = [9.5, 8.0]
+    scores = [0.0, 0.0]
     col_1, col_2, col_3 = st.columns([1.25, 1, 1.25])
 
     with col_2:
-        st.image(icon_path, use_column_width=True) #Imagem principal
-        uploaded_file = st.file_uploader(label="icone", type=['png', 'jpg'])
-
+        disable_upload = False
+        uploaded_file = st.file_uploader(label="icone", type=['png', 'jpg'], disabled=disable_upload)
         new_profile_pic_path = None
+
         if uploaded_file is not None:
+            # Define o nome do arquivo como "New_player_pic"
+            file_name = "New_player_pic" + os.path.splitext(uploaded_file.name)[-1]
+            # Caminho para salvar o arquivo temporário
+            temp_path = f"assets\_temp\_tmp-new-user-pfp.png"
             # Salva o arquivo temporariamente
-            temp_path = os.path.join("assets", "profile_pics", f"new_player_temp_pfp.png")
             with open(temp_path, "wb") as f:
-                f.write(uploaded_file.read())
+                print('ABRIU O ARQUIVO!')
+                f.write(uploaded_file.getbuffer())
+
+            print("novo caminho gerado!")
 
             # Exibe a miniatura da imagem carregada como quadrado
             with st.spinner("Carregando..."):
                 crop_to_square(temp_path, temp_path)
                 # Transforma o quadrado em um círculo
                 crop_to_circle(temp_path, temp_path)
-                st.image(temp_path, caption=f"Preview:", width=150, output_format='PNG')
+        st.image(icon_path, use_column_width=True) # Imagem principal
+            
 
         new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value="Novo jogador", max_chars=50)
         st.markdown(f'''<div style='text-align: center;'>
@@ -184,22 +201,22 @@ def show_creation_menu():
         with c2:
             new_allies_score = st.number_input(value=scores[1], label='Aliados', min_value= 0.0, max_value= 10.0, step = 1.0)
         if st.button(label="Salvar", use_container_width=True):
-                
-                #Placeholder até o CRUD
-                player_ID = "newplayer"
+                if new_name in player_names:
+                    st.write("Nome de usuário indisponível")
+                else:
+                    #Placeholder até o CRUD
+                    new_player_id = database.insert_new_player(new_player_name = new_name , score_axis = new_axis_score, score_allies = new_allies_score)
 
-                # Move a nova foto temporária para o diretório final
-                new_profile_pic_path = os.path.join("assets", "profile_pics", f"new_player_temp_pfp.png")
-                # Salva a imagem como quadrado
-                crop_to_square(temp_path, new_profile_pic_path)
-                # Transforma o quadrado em um círculo
-                crop_to_circle(new_profile_pic_path, new_profile_pic_path)
-                os.remove(temp_path)
-                st.write("Nova foto salva com sucesso!")
-                icon_path = f"assets/profile_pics/{player_ID}_pfp.png"
-                st.experimental_rerun()
-                print("Bajo bajo")
-
+                    # Move a nova foto temporária para o diretório final
+                    new_profile_pic_path = f"assets\profle_pics\{new_player_id}_pfp.png"
+                    # Salva a imagem como quadrado
+                    if os.path.exists(f"assets\_temp\_tmp-new-user-pfp.png"):
+                        shutil.move("assets\_temp\_tmp-new-user-pfp.png", new_profile_pic_path)                    
+                    st.write("Nova foto salva com sucesso!")
+                    print("Bajo bajo")
+                    
+                    st.rerun()
+                    
 
 st.markdown('''<div style='text-align: center;'>
                     <h1>Estatísticas do jogador</h1>

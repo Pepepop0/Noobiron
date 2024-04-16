@@ -1,6 +1,23 @@
 import streamlit as st
+import os
+
+def clean_start():
+    # Caminho da pasta temporária
+    temp_folder = "assets/_temp"
+
+    # Verifica se o diretório existe
+    if os.path.exists(temp_folder) and os.path.isdir(temp_folder):
+        # Percorre todos os itens dentro da pasta temporária
+        for item in os.listdir(temp_folder):
+            item_path = os.path.join(temp_folder, item)
+            # Verifica se o item é um arquivo e não é a própria pasta temporária
+            if os.path.isfile(item_path):
+                os.remove(item_path)  # Remove o arquivo
+            elif os.path.isdir(item_path):
+                os.rmdir(item_path)  # Remove o diretório (se necessário)
 
 def main():
+    clean_start()
     st.set_page_config(
         page_title = "NoobIron",
         layout = "wide",
