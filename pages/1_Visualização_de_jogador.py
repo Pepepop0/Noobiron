@@ -117,8 +117,12 @@ def show_player_stats(player_ID, player_name):
             icon_path = "assets\profle_pics\ph_player_icon.png"
 
         #Placeholder
-        scores = database.get_players_score_DF(player_ID)
-        data_player = pd.DataFrame(scores, columns=['Eixo' , 'Aliados'])
+        scores = database.get_players_score_DF(player_ID)[0][0]
+        print(scores)
+
+        # Criando um DataFrame a partir da tupla
+        data_player = pd.DataFrame([{'Eixo': scores[0], 'Aliados': scores[1]}])
+
 
         col_1, col_2, col_3 = st.columns([1.25, 1, 1.25])
 
@@ -232,7 +236,8 @@ def show_creation_menu():
                 st.image("assets\_temp\_tmp-new-user-pfp.png", use_column_width=True)
             
         try:
-            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value="Novo jogador", max_chars=25,on_change=Stop_img_change())
+            player_name = "Novo jogador"
+            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value= player_name, max_chars=25,on_change=Stop_img_change())
             st.markdown(f'''<div style='text-align: center;'>
                             </div>''', unsafe_allow_html=True)
             
@@ -254,13 +259,23 @@ def show_creation_menu():
                         if os.path.exists(f"assets\_temp\_tmp-new-user-pfp.png"):
                             shutil.move("assets\_temp\_tmp-new-user-pfp.png", new_profile_pic_path)                    
                         st.write("Nova foto salva com sucesso!")
+                        player_name = "Novo jogador"
+                        new_axis_score = 0
+                        new_allies_score = 0
 
                         st.session_state['DB_altflag'] = True
                         st.rerun()
         except OSError or SyntaxError:
             print("Erro de ciração!")
                     
-
+########## Main:
+if st.session_state['DB_altflag']:
+    players_infos = database.get_players_info()
+    player_ids = []
+    player_names = []
+    for  player_id, player_nick in players_infos.items():
+        player_ids.append(player_id)
+        player_names.append(player_nick)
 st.markdown('''<div style='text-align: center;'>
                     <h1>Estatísticas do jogador</h1>
                     <p>Aqui você pode selecionar um jogador para visualizas as suas estatísticas no banco de dados do NoobIron, você também pode editar ou excluir os dados de um jogador específico!

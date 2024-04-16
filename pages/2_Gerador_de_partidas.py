@@ -109,7 +109,7 @@ def main():
         if st.session_state['gameready'] == False:
             corner_left, col_1, col_2 = st.columns([1,1,2])
         else:
-            corner_left, col_1, col_2 = st.columns([5, 2,3])
+            corner_left, col_1, col_2 = st.columns([5, 2,5])
         if st.session_state['gameready'] == False:
             st.write("<style> .left {text-align: left; font-size: 1.0em; opacity: 0.75; font-style: italic;} </style>", unsafe_allow_html=True)
             for player in st.session_state['players_allies']:
