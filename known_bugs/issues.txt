@@ -1,3 +1,0 @@
-To-do:
-- Remodelar UI da pagina de visualização/edição de player
-
