@@ -209,12 +209,13 @@ def show_edit_menu(player_ID, player_name):
 
 def show_creation_menu():
     current_directory = os.getcwd()
-    
-    if os.path.exists(os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')):
-        icon_path = os.path.join(current_directory, 'profle_pics', 'ph_player_icon.png')
+    default_icon_path = os.path.join(current_directory, 'assets', 'profile_pics', 'ph_player_icon.png')
+
+    if os.path.exists(os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png")):
+        icon_path = os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png")
     else:
-        shutil.copy(os.path.join(current_directory, 'profle_pics', 'ph_player_icon.png'), os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png'))
-        icon_path = os.path.join(current_directory, 'profle_pics', 'ph_player_icon.png')
+        shutil.copy(default_icon_path, os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png"))
+        icon_path = default_icon_path
 
     # Placeholder
     scores = [0.0, 0.0]
@@ -222,7 +223,7 @@ def show_creation_menu():
 
     with col_2:
         disable_upload = False
-        uploaded_file = st.file_uploader(label="icone", type=['png', 'jpg'], disabled=disable_upload, on_change= set_img_change())
+        uploaded_file = st.file_uploader(label="icone", type=['png', 'jpg'], disabled=disable_upload, on_change=set_img_change)
         new_profile_pic_path = None
 
         if uploaded_file is not None and st.session_state['IMG_Change_Edit']:
@@ -230,8 +231,7 @@ def show_creation_menu():
                 # Define o nome do arquivo como "New_player_pic"
                 file_name = "New_player_pic" + os.path.splitext(uploaded_file.name)[-1]
                 # Caminho para salvar o arquivo temporário
-                
-                temp_path = os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')
+                temp_path = os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png")
                 # Salva o arquivo temporariamente
                 with open(temp_path, "wb") as f:
                     print('ABRIU O ARQUIVO!')
@@ -246,36 +246,36 @@ def show_creation_menu():
                     crop_to_circle(temp_path, temp_path)
                 st.image(icon_path, use_column_width=True) # Imagem principal
                 st.session_state['IMG_Change_Edit'] = False
-            except OSError or SyntaxError:
-                st.image("assets\_temp\_tmp-new-user-pfp.png", use_column_width=True)
+            except (OSError, SyntaxError):
+                st.image(os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png"), use_column_width=True)
             
         try:
-            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value="Novo jogador", max_chars=25,on_change=Stop_img_change())
+            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value="Novo jogador", max_chars=25, on_change=Stop_img_change)
             st.markdown(f'''<div style='text-align: center;'>
                             </div>''', unsafe_allow_html=True)
             
             c1 , c2 = st.columns([1,1])
             with c1:
-                new_axis_score = st.number_input(value=scores[0], label='Eixo', min_value= 0.0, max_value= 10.0, step = 1.0,on_change=Stop_img_change())
+                new_axis_score = st.number_input(value=scores[0], label='Eixo', min_value= 0.0, max_value= 10.0, step=1.0, on_change=Stop_img_change)
             with c2:
-                new_allies_score = st.number_input(value=scores[1], label='Aliados', min_value= 0.0, max_value= 10.0, step = 1.0,on_change=Stop_img_change())
+                new_allies_score = st.number_input(value=scores[1], label='Aliados', min_value= 0.0, max_value= 10.0, step=1.0, on_change=Stop_img_change)
             if st.button(label="Salvar", use_container_width=True):
                     if new_name in player_names:
                         st.write("Nome de usuário indisponível")
                     else:
                         #Placeholder até o CRUD
-                        new_player_id = database.insert_new_player(new_player_name = new_name , score_axis = new_axis_score, score_allies = new_allies_score)
+                        new_player_id = database.insert_new_player(new_player_name=new_name, score_axis=new_axis_score, score_allies=new_allies_score)
 
                         # Move a nova foto temporária para o diretório final
-                        new_profile_pic_path = f"assets\profle_pics\{new_player_id}_pfp.png"
+                        new_profile_pic_path = os.path.join(current_directory, "assets", "profile_pics", f"{new_player_id}_pfp.png")
                         # Salva a imagem como quadrado
-                        if os.path.exists(f"assets\_temp\_tmp-new-user-pfp.png"):
-                            shutil.move("assets\_temp\_tmp-new-user-pfp.png", new_profile_pic_path)                    
+                        if os.path.exists(os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png")):
+                            shutil.move(os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png"), new_profile_pic_path)                    
                         st.write("Nova foto salva com sucesso!")
 
                         st.session_state['DB_altflag'] = True
                         st.rerun()
-        except OSError or SyntaxError:
+        except (OSError, SyntaxError):
             print("Erro de ciração!")
 
 ########## Main:
