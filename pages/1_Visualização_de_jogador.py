@@ -34,9 +34,9 @@ def reset_st():
 
 def set_img_change():
     st.session_state['IMG_Change_Edit'] = True
-    print("pa")
+    #print("pa")
     time.sleep(1)
-    print("foi")
+    #print("foi")
 def Stop_img_change():
     st.session_state['IMG_Change_Edit'] = False
 
@@ -209,11 +209,12 @@ def show_edit_menu(player_ID, player_name):
 
 def show_creation_menu():
     current_directory = os.getcwd()
-    if os.path.exists(os.path.join(current_directory, 'profile_pics', '_tmp-new-user-pfp.png')):
-        icon_path = os.path.join(current_directory, 'profile_pics', '_tmp-new-user-pfp.png')
+    
+    if os.path.exists(os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')):
+        icon_path = os.path.join(current_directory, 'profle_pics', 'ph_player_icon.png')
     else:
-        shutil.copy( os.path.join(current_directory, 'profile_pics', 'ph_player_icon.png'), os.path.join(current_directory, 'profile_pics', '_tmp-new-user-pfp.png'))
-        icon_path = os.path.join(current_directory, 'profile_pics', 'ph_player_icon.png')
+        shutil.copy(os.path.join(current_directory, 'profle_pics', 'ph_player_icon.png'), os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png'))
+        icon_path = os.path.join(current_directory, 'profle_pics', 'ph_player_icon.png')
 
     # Placeholder
     scores = [0.0, 0.0]
@@ -225,28 +226,31 @@ def show_creation_menu():
         new_profile_pic_path = None
 
         if uploaded_file is not None and st.session_state['IMG_Change_Edit']:
-            # Define o nome do arquivo como "New_player_pic"
-            file_name = "New_player_pic" + os.path.splitext(uploaded_file.name)[-1]
-            # Caminho para salvar o arquivo temporário
-            temp_path = os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')
-            # Salva o arquivo temporariamente
-            with open(temp_path, "wb") as f:
-                print('ABRIU O ARQUIVO!')
-                f.write(uploaded_file.getbuffer())
+            try:
+                # Define o nome do arquivo como "New_player_pic"
+                file_name = "New_player_pic" + os.path.splitext(uploaded_file.name)[-1]
+                # Caminho para salvar o arquivo temporário
+                
+                temp_path = os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')
+                # Salva o arquivo temporariamente
+                with open(temp_path, "wb") as f:
+                    print('ABRIU O ARQUIVO!')
+                    f.write(uploaded_file.getbuffer())
 
-            print("novo caminho gerado!")
+                print("novo caminho gerado!")
 
-            # Exibe a miniatura da imagem carregada como quadrado
-            with st.spinner("Carregando..."):
-                crop_to_square(temp_path, temp_path)
-                # Transforma o quadrado em um círculo
-                crop_to_circle(temp_path, temp_path)
-            st.image(icon_path, use_column_width=True) # Imagem principal
-            st.session_state['IMG_Change_Edit'] = False
+                # Exibe a miniatura da imagem carregada como quadrado
+                with st.spinner("Carregando..."):
+                    crop_to_square(temp_path, temp_path)
+                    # Transforma o quadrado em um círculo
+                    crop_to_circle(temp_path, temp_path)
+                st.image(icon_path, use_column_width=True) # Imagem principal
+                st.session_state['IMG_Change_Edit'] = False
+            except OSError or SyntaxError:
+                st.image("assets\_temp\_tmp-new-user-pfp.png", use_column_width=True)
             
         try:
-            player_name = "Novo jogador"
-            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value= player_name, max_chars=25,on_change=Stop_img_change())
+            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value="Novo jogador", max_chars=25,on_change=Stop_img_change())
             st.markdown(f'''<div style='text-align: center;'>
                             </div>''', unsafe_allow_html=True)
             
@@ -263,22 +267,17 @@ def show_creation_menu():
                         new_player_id = database.insert_new_player(new_player_name = new_name , score_axis = new_axis_score, score_allies = new_allies_score)
 
                         # Move a nova foto temporária para o diretório final
-                        new_profile_pic_path = os.path.join(current_directory, 'profle_pics', f'{new_player_id}_pfp.png')
+                        new_profile_pic_path = f"assets\profle_pics\{new_player_id}_pfp.png"
                         # Salva a imagem como quadrado
-                        if os.path.exists(os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')): 
-                            shutil.move(os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png'), new_profile_pic_path)                    
+                        if os.path.exists(f"assets\_temp\_tmp-new-user-pfp.png"):
+                            shutil.move("assets\_temp\_tmp-new-user-pfp.png", new_profile_pic_path)                    
                         st.write("Nova foto salva com sucesso!")
-                        player_name = "Novo jogador"
-                        new_axis_score = 0
-                        new_allies_score = 0
 
                         st.session_state['DB_altflag'] = True
-                        st.cache_resource.clear()
-                        reset_st()
                         st.rerun()
         except OSError or SyntaxError:
             print("Erro de ciração!")
-                    
+
 ########## Main:
 if st.session_state['DB_altflag']:
     players_infos = database.get_players_info()
