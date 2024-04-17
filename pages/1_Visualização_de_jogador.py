@@ -210,9 +210,6 @@ def show_edit_menu(player_ID, player_name):
 def show_creation_menu():
     current_directory = os.getcwd()
     default_icon_path = os.path.join(current_directory, 'profile_pics', 'ph_player_icon.png')
-
-    st.image(default_icon_path)
-
     if os.path.exists(os.path.join(current_directory, "_temp", "_tmp-new-user-pfp.png")):
         icon_path = os.path.join(current_directory, "_temp", "_tmp-new-user-pfp.png")
     else:
