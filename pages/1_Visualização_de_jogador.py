@@ -273,6 +273,7 @@ def show_creation_menu():
                         st.write("Nova foto salva com sucesso!")
 
                         st.session_state['DB_altflag'] = True
+                        clean_start()
                         st.rerun()
         except (OSError, SyntaxError):
             print("Erro de ciração!")
