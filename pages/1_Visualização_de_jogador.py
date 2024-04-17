@@ -311,7 +311,9 @@ with c3:
 
 col_1, col_2, col_3 = st.columns([2,5,1])
 lock_UI = False
-if st.session_state['Visualization_mode'] == 0 or st.session_state['Visualization_mode'] == 1:
+#if st.session_state['Visualization_mode'] == 0 or st.session_state['Visualization_mode'] == 1:
+
+if st.session_state['Visualization_mode'] == 0:
     with col_1:
         selected_player = st.selectbox(label="Nick do jogador:", options=player_names, index=None, placeholder="insira o nick do jogador", label_visibility='collapsed', disabled=lock_UI)
         
@@ -321,12 +323,21 @@ if st.session_state['Visualization_mode'] == 0 or st.session_state['Visualizatio
             if player_nick == selected_player:
                 selected_id = player_id
                 break
-
-
-if st.session_state['Visualization_mode'] == 0:
     show_player_stats(selected_id, selected_player )
-if st.session_state['Visualization_mode'] == 1 and selected_id != None:
-    show_edit_menu(selected_id, selected_player)
+
+if st.session_state['Visualization_mode'] == 1:
+    with col_1:
+        selected_player = st.selectbox(label="Nick do jogador:", options=player_names, index=None, placeholder="insira o nick do jogador", label_visibility='collapsed', disabled=lock_UI)
+        
+        #Rodigo me mata se ele ver isso
+        selected_id = None
+        for player_id, player_nick in players_infos.items():
+            if player_nick == selected_player:
+                selected_id = player_id
+                break
+    if selected_id != None:
+        show_edit_menu(selected_id, selected_player)
+        
 if st.session_state['Visualization_mode'] == 2:
     show_creation_menu()
 
