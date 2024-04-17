@@ -211,6 +211,8 @@ def show_creation_menu():
     current_directory = os.getcwd()
     default_icon_path = os.path.join(current_directory, 'assets', 'profile_pics', 'ph_player_icon.png')
 
+    st.image(default_icon_path)
+
     if os.path.exists(os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png")):
         icon_path = os.path.join(current_directory, "assets", "_temp", "_tmp-new-user-pfp.png")
     else:
