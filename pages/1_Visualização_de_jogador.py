@@ -228,27 +228,24 @@ def show_creation_menu():
         new_profile_pic_path = None
 
         if uploaded_file is not None and st.session_state['IMG_Change_Edit']:
-            try:
-                # Define o nome do arquivo como "New_player_pic"
-                file_name = "New_player_pic" + os.path.splitext(uploaded_file.name)[-1]
-                # Caminho para salvar o arquivo temporário
-                temp_path = os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')
-                # Salva o arquivo temporariamente
-                with open(temp_path, "wb") as f:
-                    print('ABRIU O ARQUIVO!')
-                    f.write(uploaded_file.getbuffer())
+            # Define o nome do arquivo como "New_player_pic"
+            file_name = "New_player_pic" + os.path.splitext(uploaded_file.name)[-1]
+            # Caminho para salvar o arquivo temporário
+            temp_path = os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png')
+            # Salva o arquivo temporariamente
+            with open(temp_path, "wb") as f:
+                print('ABRIU O ARQUIVO!')
+                f.write(uploaded_file.getbuffer())
 
-                print("novo caminho gerado!")
+            print("novo caminho gerado!")
 
-                # Exibe a miniatura da imagem carregada como quadrado
-                with st.spinner("Carregando..."):
-                    crop_to_square(temp_path, temp_path)
-                    # Transforma o quadrado em um círculo
-                    crop_to_circle(temp_path, temp_path)
-                st.image(icon_path, use_column_width=True) # Imagem principal
-                st.session_state['IMG_Change_Edit'] = False
-            except OSError or SyntaxError:
-                st.image(os.path.join(current_directory, '_temp', '_tmp-new-user-pfp.png'), use_column_width=True)
+            # Exibe a miniatura da imagem carregada como quadrado
+            with st.spinner("Carregando..."):
+                crop_to_square(temp_path, temp_path)
+                # Transforma o quadrado em um círculo
+                crop_to_circle(temp_path, temp_path)
+            st.image(icon_path, use_column_width=True) # Imagem principal
+            st.session_state['IMG_Change_Edit'] = False
             
         try:
             player_name = "Novo jogador"

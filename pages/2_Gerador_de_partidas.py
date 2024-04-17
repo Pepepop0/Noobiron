@@ -1,5 +1,6 @@
 import streamlit as st
 from db_setup.players_crud import playersCRUD
+import os
 
 #Variaveis globais:
 player_database = playersCRUD()
@@ -22,6 +23,7 @@ if 'DB_altflag' not in st.session_state:
 
 
 def main():
+    current_directory = os.getcwd()
     st.markdown('''<div style='text-align: center;'>
                     <h1>Gerador de Partidas</h1>
                     <p> Aqui você pode gerar suas partidas a partir dos seus jogadores, apenas selecione a modalidade de jogo que você quer e forneça os jogadores que irão participar da partida! </p> 
@@ -123,7 +125,9 @@ def main():
             st.write("<style> .left {text-align: left; font-size: 1.5em; opacity: 1;} </style>", unsafe_allow_html=True)
             for player in st.session_state['players_allies']:
                 with col_1:
-                    st.image(f'assets\profle_pics\{get_players_ids(player_names = player_names, player_ids=player_ids, selected_players = [player])[0]}_pfp.png', width=65)
+                    img_path = os.path.join(current_directory, 'profile_pics', f'{get_players_ids(player_names = player_names, player_ids=player_ids, selected_players = [player])[0]}_pfp.png')
+                    st.image(img_path, width=65)
+                    
                 with col_2:
                     st.markdown(f"<div style='font-size: 2.25em; line-height: 2.20em; vertical-align: middle;'>{player}</div>", unsafe_allow_html=True)
 
@@ -141,7 +145,8 @@ def main():
             st.write("<style> .right {text-align: right; font-size: 1.0em; opacity: 1;} </style>", unsafe_allow_html=True)
             for player in st.session_state['players_axis']:
                 with col_4:
-                    st.image(f'assets\profle_pics\{get_players_ids(player_names = player_names, player_ids=player_ids, selected_players = [player])[0]}_pfp.png', width=65)
+                    img_path_2 = os.path.join(current_directory, 'profile_pics', f'{get_players_ids(player_names = player_names, player_ids=player_ids, selected_players = [player])[0]}_pfp.png')
+                    st.image(img_path_2, width=65)
                 with col_3:
                     st.markdown(f"<div style='font-size: 2.25em; line-height: 2.20em; vertical-align: middle;'>{player}</div>", unsafe_allow_html=True)
 
