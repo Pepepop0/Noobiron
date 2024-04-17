@@ -116,8 +116,8 @@ def show_player_stats(player_ID, player_name):
         print(f'imagem não achada para o jogador: {player_ID}')
     else:
         current_directory = os.getcwd()
-        if os.path.exists(os.path.join(current_directory, 'profile_pics', f'{player_ID}.png')):
-            icon_path = os.path.join(current_directory, 'profile_pics', f'{player_ID}.png')
+        if os.path.exists(os.path.join(current_directory, 'profile_pics', f'{player_ID}_pfp.png')):
+            icon_path = os.path.join(current_directory, 'profile_pics', f'{player_ID}_pfp.png')
         else:
             print('imagem não achada!')
             icon_path = os.path.join(current_directory, 'profile_pics', 'ph_player_icon.png')
