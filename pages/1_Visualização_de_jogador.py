@@ -142,11 +142,12 @@ def show_player_stats(player_ID, player_name):
             c1 , c2 = st.columns([1,1])
 
 def show_edit_menu(player_ID, player_name):
-    if os.path.exists(f"assets\profle_pics\{player_ID}_pfp.png"):
-        icon_path = f"assets\profle_pics\{player_ID}_pfp.png"
+    current_directory = os.getcwd()
+    if os.path.exists(os.path.join(current_directory, 'profile_pics', f'{player_ID}_pfp.png')):
+        icon_path = os.path.join(current_directory, 'profile_pics', f'{player_ID}_pfp.png')
     else:
         print(f'imagem não achada para o jogador: {player_ID}')
-        icon_path = "assets\profle_pics\ph_player_icon.png"
+        icon_path = os.path.join(current_directory, 'profile_pics', 'ph_player_icon.png')
 
     # Placeholder
     scores = database.get_players_score(player_ID)
@@ -160,7 +161,8 @@ def show_edit_menu(player_ID, player_name):
         if uploaded_file is not None and st.session_state['IMG_Change_Edit']:
             try:
                 # Salva o arquivo temporariamente
-                temp_path = f"assets\_temp\_tmp-{player_ID}-pfp.png"
+                
+                temp_path = os.path.join(current_directory, '_temp', f'_tmp-{player_ID}-pfp.png')
                 with open(temp_path, "wb") as f:
                     f.write(uploaded_file.read())
 
@@ -188,8 +190,8 @@ def show_edit_menu(player_ID, player_name):
             cl1 , cl2 = st.columns([1,1])
             with cl1:
                 if st.button(label="Salvar", use_container_width=True):
-                    if os.path.exists(f"assets\_temp\_tmp-{player_ID}-pfp.png"):
-                        shutil.move(src= f"assets\_temp\_tmp-{player_ID}-pfp.png", dst=f"assets\profle_pics\{player_ID}_pfp.png")
+                    if os.path.exists(os.path.join(current_directory, '_temp', f'_tmp-{player_ID}-pfp.png')):
+                        shutil.move(src= os.path.join(current_directory, '_temp', f'_tmp-{player_ID}-pfp.png'), dst=os.path.join(current_directory, 'profile_pics', f'{player_ID}_pfp.png'))
                     database.update_player_info(id=selected_id , new_score_axis= new_axis_score_input , new_score_allies= new_allies_score_input, new_name = new_name)
                     st.session_state['DB_altflag'] = True
                     st.cache_resource.clear()
@@ -199,6 +201,7 @@ def show_edit_menu(player_ID, player_name):
                 if st.button(label="Deletar jogador", use_container_width=True):
                     database.delete_player(id=selected_id)
                     st.session_state['DB_altflag'] = True
+                    os.remove(os.path.join(current_directory, 'profile_pics', f'{player_ID}_pfp.png'))
                     reset_st()
                     st.rerun()
         except SyntaxError:
