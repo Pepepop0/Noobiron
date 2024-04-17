@@ -9,6 +9,10 @@ player_names = []
 for  player_id, player_nick in players_infos.items():
     player_ids.append(player_id)
     player_names.append(player_nick)
+st.set_page_config(
+        layout = "wide",
+        )
+
 
 if 'DB_altflag' not in st.session_state:
     st.session_state['DB_altflag'] = False

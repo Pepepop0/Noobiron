@@ -7,7 +7,9 @@ import shutil
 import time
 #Placeholder, integrar com o DB futuramente
 
-
+st.set_page_config(
+        layout = "wide",
+        )
 database = playersCRUD()
 players_infos = database.get_players_info()
 player_ids = []
