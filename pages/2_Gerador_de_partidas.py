@@ -1,7 +1,7 @@
 import streamlit as st
 from db_setup.players_crud import playersCRUD
 import os
-
+st.set_page_config( layout = "wide")
 #Variaveis globais:
 player_database = playersCRUD()
 players_infos = player_database.get_players_info()

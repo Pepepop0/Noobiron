@@ -6,6 +6,7 @@ from db_setup.players_crud import playersCRUD
 import shutil
 import time
 #Placeholder, integrar com o DB futuramente
+st.set_page_config( layout = "wide")
 
 database = playersCRUD()
 players_infos = database.get_players_info()
@@ -35,7 +36,7 @@ def reset_st():
 def set_img_change():
     st.session_state['IMG_Change_Edit'] = True
     #print("pa")
-    time.sleep(1)
+    time.sleep(2)
     #print("foi")
 def Stop_img_change():
     st.session_state['IMG_Change_Edit'] = False
@@ -249,15 +250,15 @@ def show_creation_menu():
                 st.image(os.path.join(current_directory, "_temp", "_tmp-new-user-pfp.png"), use_column_width=True)
             
         try:
-            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value="Novo jogador", max_chars=25, on_change=Stop_img_change)
+            new_name = st.text_input(label='Novo nome', placeholder="Novo jogador", value="Novo jogador", max_chars=25, on_change=Stop_img_change())
             st.markdown(f'''<div style='text-align: center;'>
                             </div>''', unsafe_allow_html=True)
             
             c1 , c2 = st.columns([1,1])
             with c1:
-                new_axis_score = st.number_input(value=scores[0], label='Eixo', min_value= 0.0, max_value= 10.0, step=1.0, on_change=Stop_img_change)
+                new_axis_score = st.number_input(value=scores[0], label='Eixo', min_value= 0.0, max_value= 10.0, step=1.0, on_change=Stop_img_change())
             with c2:
-                new_allies_score = st.number_input(value=scores[1], label='Aliados', min_value= 0.0, max_value= 10.0, step=1.0, on_change=Stop_img_change)
+                new_allies_score = st.number_input(value=scores[1], label='Aliados', min_value= 0.0, max_value= 10.0, step=1.0, on_change=Stop_img_change())
             if st.button(label="Salvar", use_container_width=True):
                     if new_name in player_names:
                         st.write("Nome de usuário indisponível")
