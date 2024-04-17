@@ -115,11 +115,12 @@ def show_player_stats(player_ID, player_name):
     if player_name == None:
         print(f'imagem não achada para o jogador: {player_ID}')
     else:
-        if os.path.exists(f"assets\profle_pics\{player_ID}_pfp.png"):
-            icon_path = f"assets\profle_pics\{player_ID}_pfp.png"
+        current_directory = os.getcwd()
+        if os.path.exists(os.path.join(current_directory, 'profile_pics', f'{player_ID}.png')):
+            icon_path = os.path.join(current_directory, 'profile_pics', f'{player_ID}.png')
         else:
             print('imagem não achada!')
-            icon_path = "assets\profle_pics\ph_player_icon.png"
+            icon_path = os.path.join(current_directory, 'profile_pics', 'ph_player_icon.png')
 
         #Placeholder
         scores = database.get_players_score_DF(player_ID)[0][0]
